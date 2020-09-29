@@ -1,4 +1,4 @@
-package com.mydfmax.absenqe;
+package com.mydfmax.absenqr;
 
 import org.junit.Test;
 
