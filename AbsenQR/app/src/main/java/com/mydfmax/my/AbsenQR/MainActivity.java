@@ -2,19 +2,14 @@ package com.mydfmax.my.AbsenQR;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.mydfmax.my.AbsenQR.ui.home.HomeFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,16 +18,45 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         checkPermission();
-
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(navView, navController);
+        init();
+    }
+    void init(){
+        Button profile = findViewById(R.id.btn_profile);
+        Button login = findViewById(R.id.btn_login);
+        Button sign_up = findViewById(R.id.btn_sign_up);
+        Button home = findViewById(R.id.btn_home);
+        PrefManager prefManager = PrefManager.getInstance(MainActivity.this);
+        if(prefManager.isLoggedIn()) {
+            login.setVisibility(View.GONE);
+            sign_up.setVisibility(View.GONE);
+            home.setVisibility(View.GONE);
+            profile.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                }
+            });
+        } else {
+            profile.setVisibility(View.GONE);
+            login.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                }
+            });
+            sign_up.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(MainActivity.this, SignUpActivity.class));
+                }
+            });
+            home.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(MainActivity.this, HomeActivity.class));
+                }
+            });
+        }
     }
 
     public static boolean hasPermisiion(Context context, String... permissions){
@@ -50,7 +74,8 @@ public class MainActivity extends AppCompatActivity {
         String[] PERMISIION = {
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA
+                Manifest.permission.CAMERA,
+                Manifest.permission.INTERNET
         };
         if (!hasPermisiion(this, PERMISIION)){
             ActivityCompat.requestPermissions(this, PERMISIION, PERMISIION_ALL);
